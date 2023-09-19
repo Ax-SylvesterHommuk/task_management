@@ -37,6 +37,20 @@ namespace task_backend
                 app.UseSwaggerUI();
             }
 
+            // Adds support for Vue Router
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == 404 && !context.Request.Path.Value.StartsWith("/api"))
+                {
+                    context.Request.Path = "/index.html";
+                    await next();
+                }
+            });
+
+            app.UseFileServer();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

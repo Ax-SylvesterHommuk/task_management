@@ -42,6 +42,9 @@
           </li>
         </ul>
       </div>
+      <button @click="logout" class="absolute bottom-4 left-4 bg-red-500 text-white p-2 rounded hover:bg-red-600">
+        Logout
+      </button>
     </div>
   </div>
 </template>
@@ -148,6 +151,23 @@ export default {
         } catch (error) {
           console.error('An error occurred while deleting the task:', error);
         }
+      }
+    },
+  
+    async logout() {
+      try {
+        const response = await fetch('/api/auth/logout', {
+          method: 'POST',
+        });
+
+        if (response.ok) {
+          console.log('Logged out successfully');
+          this.$router.push('/login');
+        } else {
+          console.error('Logout failed');
+        }
+      } catch (error) {
+        console.error('An error occurred during logout:', error);
       }
     },
   },

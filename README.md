@@ -17,7 +17,6 @@ Improved version of the older one with C# backend instead of Nodejs.
 # Features
 - [x] View all tasks
 - [x] Create a task
-- [x] Update a task
 - [x] Delete a task
 - [x] Edit a task
 

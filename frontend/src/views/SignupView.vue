@@ -19,6 +19,10 @@
                     Sign Up
                 </button>
             </form>
+            <div class="mt-4 text-center">
+                <p>Already have an account?</p>
+                <button @click="this.$router.push('/login')" class="text-blue-500 hover:underline">Login</button>
+            </div>
         </div>
     </div>
 </template>

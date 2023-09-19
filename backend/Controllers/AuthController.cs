@@ -21,7 +21,7 @@ namespace task_backend.Controllers
 
                 if (UserExists(connection, request.Username))
                 {
-                    return Conflict("Username already exists");
+                    return Conflict("Account already exists");
                 }
 
                 string hashedPassword = HashPassword(request.Password);
@@ -34,6 +34,8 @@ namespace task_backend.Controllers
                 };
 
                 InsertUser(connection, user);
+
+                HttpContext.Session.SetString("UserId", user.Id.ToString());
 
                 return CreatedAtAction("GetUserProfile", new { id = user.Id }, user);
             }

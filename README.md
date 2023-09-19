@@ -10,7 +10,9 @@ Improved version of the older one with C# backend instead of Nodejs.
 - Then run `npm run build` to build the frontend.
 
 - Copy the contents of the `frontend/dist/` folder and paste them into the `backend/wwwroot` folder.
-- Now just run `dotnet run` inside the `backend` folder and the server should start at `localhost:3000`.
+- Now just run `dotnet run` inside the `backend` folder and the server should start at `http://localhost:3000`.
+
+- Swagger UI is available at `http://localhost:3000/swagger/index.html`.
 
 # Features
 - [x] View all tasks

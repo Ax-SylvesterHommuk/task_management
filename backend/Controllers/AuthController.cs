@@ -24,6 +24,11 @@ namespace task_backend.Controllers
         [HttpPost("signup")]
         public IActionResult Signup([FromBody] AuthenticationRequest request)
         {
+            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Username and password cannot be empty.");
+            }
+            
             using (MySqlConnection connection = _db.GetConnection())
             {
                 connection.Open();

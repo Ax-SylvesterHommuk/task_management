@@ -44,9 +44,18 @@ namespace task_backend.Controllers
 
             userTask.UserId = userId;
 
-            if (InsertUserTask(userTask))
+            if (InsertUserTask(userTask, out int newTaskId))
             {
-                return CreatedAtAction(nameof(GetTask), new { id = userTask.Id }, userTask);
+                var createdTask = GetUserTask(newTaskId);
+
+                if (createdTask != null)
+                {
+                    return CreatedAtAction(nameof(GetTask), new { id = createdTask.Id }, createdTask);
+                }
+                else
+                {
+                    return BadRequest("Failed to create task.");
+                }
             }
             else
             {
@@ -215,17 +224,21 @@ namespace task_backend.Controllers
             }
         }
 
-        private bool InsertUserTask(UserTask userTask)
+        private bool InsertUserTask(UserTask userTask, out int newTaskId)
         {
+            newTaskId = 0;
+
             using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new MySqlCommand("INSERT INTO Tasks (UserId, TaskDescription) VALUES (@UserId, @TaskDescription)", connection))
+                using (var command = new MySqlCommand("INSERT INTO Tasks (UserId, TaskDescription) VALUES (@UserId, @TaskDescription); SELECT LAST_INSERT_ID();", connection))
                 {
                     command.Parameters.AddWithValue("@UserId", userTask.UserId);
                     command.Parameters.AddWithValue("@TaskDescription", userTask.TaskDescription);
 
-                    return command.ExecuteNonQuery() > 0;
+                    newTaskId = Convert.ToInt32(command.ExecuteScalar());
+
+                    return newTaskId > 0;
                 }
             }
         }

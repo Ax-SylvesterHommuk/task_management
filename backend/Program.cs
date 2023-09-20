@@ -16,7 +16,7 @@ namespace task_backend
 
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.Listen(IPAddress.Loopback, 3000); // Listen on localhost (127.0.0.1) and port 3000
+                options.Listen(IPAddress.Loopback, 5000); // Listen on localhost (127.0.0.1) and port 5000
             });
 
             // Add session support with an in-memory cache

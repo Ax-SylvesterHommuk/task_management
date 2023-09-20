@@ -27,4 +27,4 @@ Improved version of the older one with C# backend instead of Nodejs.
 - [x] Logout
 
 # Database
-- [x] SQLite3 (automatically comes with the backend)
+- [x] MySQL (must be installed on your machine)

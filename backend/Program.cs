@@ -8,13 +8,25 @@ namespace task_backend
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
+            var allowedOrigin = configuration.GetValue<string>("CorsSettings:AllowedOrigin");
 
-            // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddScoped<DatabaseContext>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", builder =>
+                {
+                    builder.WithOrigins(allowedOrigin)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
 
             builder.WebHost.ConfigureKestrel(options =>
             {
@@ -28,7 +40,6 @@ namespace task_backend
                 options.IdleTimeout = TimeSpan.FromMinutes(60); 
             });
 
-            // Add in-memory distributed cache
             builder.Services.AddDistributedMemoryCache();
 
             var app = builder.Build();
@@ -39,7 +50,7 @@ namespace task_backend
                 app.UseSwaggerUI();
             }
 
-            // Adds support for Vue Router
+            // Loads the wwwroot/index.html
             app.Use(async (context, next) =>
             {
                 await next();
@@ -50,6 +61,8 @@ namespace task_backend
                     await next();
                 }
             });
+
+            app.UseCors("AllowLocalhost");
 
             app.UseFileServer();
 

@@ -11,9 +11,9 @@ Improved version of the older one with C# backend instead of Nodejs.
 
 - Copy the contents of the `frontend/dist/` folder and paste them into the `backend/wwwroot` folder.
 - Setup MySQL database by opening `appsettings.json` and changing the `DefaultConnection` string to your database connection string.
-- Now just run `dotnet run` inside the `backend` folder and the server should start at `http://localhost:3000`.
+- Now just run `dotnet run` inside the `backend` folder and the server should start at `http://localhost:5000`.
 
-- Swagger UI is available at `http://localhost:3000/swagger/index.html`.
+- Swagger UI is available at `http://localhost:5000/swagger/index.html`.
 
 # Features
 - [x] View all tasks
@@ -28,3 +28,6 @@ Improved version of the older one with C# backend instead of Nodejs.
 
 # Database
 - [x] MySQL (must be installed on your machine)
+
+# Security
+- [x] CORS enabled by default (http://localhost:5000)

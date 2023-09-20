@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using task_backend.Models;
 using MySql.Data.MySqlClient;
 using task_backend.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace task_backend.Controllers
 {
     [ApiController]
     [Route("api/tasks")]
+    [EnableCors("AllowLocalhost")]
     public class UserTasksController : ControllerBase
     {
         private readonly DatabaseContext _db;

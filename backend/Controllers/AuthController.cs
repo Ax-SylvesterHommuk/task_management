@@ -5,11 +5,13 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using task_backend.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace task_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("AllowLocalhost")]
     public class AuthController : ControllerBase
     {
         private readonly DatabaseContext _db;

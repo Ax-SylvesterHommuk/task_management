@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data.SQLite;
+using MySql.Data.MySqlClient;
 using task_backend.Models;
+using System.Data;
 using System.Security.Cryptography;
 using System.Text;
+using task_backend.Data;
 
 namespace task_backend.Controllers
 {
@@ -10,12 +12,17 @@ namespace task_backend.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private static readonly string ConnectionString = "Data Source=mydatabase.db;Version=3;";
+        private readonly DatabaseContext _db;
+
+        public AuthController(DatabaseContext db)
+        {
+            _db = db;
+        }
 
         [HttpPost("signup")]
         public IActionResult Signup([FromBody] AuthenticationRequest request)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+            using (MySqlConnection connection = _db.GetConnection())
             {
                 connection.Open();
 
@@ -44,7 +51,7 @@ namespace task_backend.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] AuthenticationRequest request)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+            using (MySqlConnection connection = _db.GetConnection())
             {
                 connection.Open();
 
@@ -83,7 +90,7 @@ namespace task_backend.Controllers
                 return Unauthorized("Not authenticated");
             }
 
-            using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+            using (MySqlConnection connection = _db.GetConnection())
             {
                 connection.Open();
 
@@ -99,9 +106,9 @@ namespace task_backend.Controllers
         }
 
         // Check if a user with the given username exists
-        private bool UserExists(SQLiteConnection connection, string username)
+        private bool UserExists(MySqlConnection connection, string username)
         {
-            using (SQLiteCommand cmd = new SQLiteCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username", connection))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username", connection))
             {
                 cmd.Parameters.AddWithValue("@Username", username);
                 return (long)cmd.ExecuteScalar() > 0;
@@ -109,9 +116,9 @@ namespace task_backend.Controllers
         }
 
         // Insert a new user into the Users table
-        private void InsertUser(SQLiteConnection connection, User user)
+        private void InsertUser(MySqlConnection connection, User user)
         {
-            using (SQLiteCommand cmd = new SQLiteCommand("INSERT INTO Users (Id, Username, HashedPassword) VALUES (@Id, @Username, @HashedPassword)", connection))
+            using (MySqlCommand cmd = new MySqlCommand("INSERT INTO Users (Id, Username, HashedPassword) VALUES (@Id, @Username, @HashedPassword)", connection))
             {
                 cmd.Parameters.AddWithValue("@Id", user.Id.ToString());
                 cmd.Parameters.AddWithValue("@Username", user.Username);
@@ -121,12 +128,12 @@ namespace task_backend.Controllers
         }
 
         // Retrieve a user by their username
-        private User GetUserByUsername(SQLiteConnection connection, string username)
+        private User GetUserByUsername(MySqlConnection connection, string username)
         {
-            using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Users WHERE Username = @Username", connection))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT * FROM Users WHERE Username = @Username", connection))
             {
                 cmd.Parameters.AddWithValue("@Username", username);
-                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -143,12 +150,12 @@ namespace task_backend.Controllers
         }
 
         // Retrieve a user by their ID
-        private User GetUserById(SQLiteConnection connection, Guid userId)
+        private User GetUserById(MySqlConnection connection, Guid userId)
         {
-            using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Users WHERE Id = @Id", connection))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT * FROM Users WHERE Id = @Id", connection))
             {
                 cmd.Parameters.AddWithValue("@Id", userId.ToString());
-                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {

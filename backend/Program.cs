@@ -1,4 +1,5 @@
 using System.Net;
+using task_backend.Data;
 
 namespace task_backend
 {
@@ -10,6 +11,7 @@ namespace task_backend
 
             // Add services to the container.
             builder.Services.AddControllers();
+            builder.Services.AddScoped<DatabaseContext>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

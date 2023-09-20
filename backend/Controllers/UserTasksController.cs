@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using task_backend.Models;
-using System.Data;
-using System.Data.SQLite;
+using MySql.Data.MySqlClient;
+using task_backend.Data;
 
 namespace task_backend.Controllers
 {
@@ -9,7 +9,12 @@ namespace task_backend.Controllers
     [Route("api/tasks")]
     public class UserTasksController : ControllerBase
     {
-        private static readonly string ConnectionString = "Data Source=mydatabase.db;Version=3;";
+        private readonly DatabaseContext _db;
+
+        public UserTasksController(DatabaseContext db)
+        {
+            _db = db;
+        }
 
         // GET /api/tasks
         [HttpGet]
@@ -150,10 +155,10 @@ namespace task_backend.Controllers
         {
             var tasks = new List<UserTask>();
 
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("SELECT * FROM Tasks WHERE UserId = @UserId", connection))
+                using (var command = new MySqlCommand("SELECT * FROM Tasks WHERE UserId = @UserId", connection))
                 {
                     command.Parameters.AddWithValue("@UserId", userId);
                     using (var reader = command.ExecuteReader())
@@ -183,10 +188,10 @@ namespace task_backend.Controllers
                 return null;
             }
 
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("SELECT * FROM Tasks WHERE Id = @Id AND UserId = @UserId", connection))
+                using (var command = new MySqlCommand("SELECT * FROM Tasks WHERE Id = @Id AND UserId = @UserId", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     command.Parameters.AddWithValue("@UserId", userId);
@@ -212,10 +217,10 @@ namespace task_backend.Controllers
 
         private bool InsertUserTask(UserTask userTask)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("INSERT INTO Tasks (UserId, TaskDescription) VALUES (@UserId, @TaskDescription)", connection))
+                using (var command = new MySqlCommand("INSERT INTO Tasks (UserId, TaskDescription) VALUES (@UserId, @TaskDescription)", connection))
                 {
                     command.Parameters.AddWithValue("@UserId", userTask.UserId);
                     command.Parameters.AddWithValue("@TaskDescription", userTask.TaskDescription);
@@ -227,10 +232,10 @@ namespace task_backend.Controllers
 
         private bool UpdateUserTask(int id, UserTask updatedUserTask)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("UPDATE Tasks SET TaskDescription = @TaskDescription WHERE Id = @Id AND UserId = @UserId", connection))
+                using (var command = new MySqlCommand("UPDATE Tasks SET TaskDescription = @TaskDescription WHERE Id = @Id AND UserId = @UserId", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     command.Parameters.AddWithValue("@UserId", updatedUserTask.UserId);
@@ -243,10 +248,10 @@ namespace task_backend.Controllers
 
         private bool DeleteUserTask(int id)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = _db.GetConnection())
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("DELETE FROM Tasks WHERE Id = @Id", connection))
+                using (var command = new MySqlCommand("DELETE FROM Tasks WHERE Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     return command.ExecuteNonQuery() > 0;

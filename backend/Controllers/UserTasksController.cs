@@ -18,7 +18,12 @@ namespace task_backend.Controllers
             _db = db;
         }
 
-        // GET /api/tasks
+        /// <summary>
+        /// Get a list of tasks for the authenticated user.
+        /// </summary>
+        /// <returns>Returns a list of user tasks.</returns>
+        /// <response code="200">Success response with a list of user tasks.</response>
+        /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
         [HttpGet]
         public IActionResult GetTasks()
         {
@@ -33,7 +38,13 @@ namespace task_backend.Controllers
             return Ok(userTasks);
         }
 
-        // POST /api/tasks
+        /// <summary>
+        /// Create a new user task.
+        /// </summary>
+        /// <param name="userTask">The task to create.</param>
+        /// <returns>Returns the created task if successful.</returns>
+        /// <response code="201">Created response with the created user task.</response>
+        /// <response code="400">Bad Request response with an error message if the task creation fails.</response>
         [HttpPost]
         public IActionResult CreateTask([FromBody] UserTask userTask)
         {
@@ -65,7 +76,15 @@ namespace task_backend.Controllers
             }
         }
 
-        // GET /api/tasks/{id}
+        /// <summary>
+        /// Get a user task by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the task to retrieve.</param>
+        /// <returns>Returns the user task with the specified ID if authorized.</returns>
+        /// <response code="200">Success response with the user task.</response>
+        /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
+        /// <response code="403">Forbidden response with an error message if the user doesn't have permission to access this task.</response>
+        /// <response code="404">Not Found response with an error message if the task is not found.</response>
         [HttpGet("{id}", Name = "GetTask")]
         public IActionResult GetTask(int id)
         {
@@ -91,7 +110,17 @@ namespace task_backend.Controllers
             return Ok(userTask);
         }
 
-        // PUT /api/tasks/{id}
+        /// <summary>
+        /// Update a user task by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the task to update.</param>
+        /// <param name="updatedUserTask">The updated task information.</param>
+        /// <returns>Returns NoContent if the update is successful.</returns>
+        /// <response code="204">No Content response indicating a successful update.</response>
+        /// <response code="400">Bad Request response with an error message if the update fails.</response>
+        /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
+        /// <response code="403">Forbidden response with an error message if the user doesn't have permission to update this task.</response>
+        /// <response code="404">Not Found response with an error message if the task is not found.</response>
         [HttpPut("{id}")]
         public IActionResult UpdateTask(int id, [FromBody] UserTask updatedUserTask)
         {
@@ -127,7 +156,16 @@ namespace task_backend.Controllers
             }
         }
 
-        // DELETE /api/tasks/{id}
+        /// <summary>
+        /// Delete a user task by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the task to delete.</param>
+        /// <returns>Returns NoContent if the deletion is successful.</returns>
+        /// <response code="204">No Content response indicating a successful deletion.</response>
+        /// <response code="400">Bad Request response with an error message if the deletion fails.</response>
+        /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
+        /// <response code="403">Forbidden response with an error message if the user doesn't have permission to delete this task.</response>
+        /// <response code="404">Not Found response with an error message if the task is not found.</response>
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {

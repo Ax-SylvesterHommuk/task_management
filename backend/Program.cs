@@ -1,4 +1,6 @@
 using System.Net;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
 using task_backend.Data;
 using task_backend.Helpers;
 
@@ -18,7 +20,20 @@ namespace task_backend
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Task Manager API",
+                    Version = "v1",
+                    Description = "Rest API for the Task Manager application."
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+            });
 
             builder.Services.AddCors(options =>
             {

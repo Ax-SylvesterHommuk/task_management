@@ -23,6 +23,14 @@ namespace task_backend.Controllers
             _db = db;
         }
 
+        /// <summary>
+        /// Register a new user.
+        /// </summary>
+        /// <param name="request">Authentication request containing username and password.</param>
+        /// <returns>Returns the newly registered user if successful.</returns>
+        /// <response code="201">Returns the newly registered user info as a JSON object.</response>
+        /// <response code="400">Username and password cannot be empty</response>
+        /// <response code="409">Account already exists</response>
         [HttpPost("signup")]
         public IActionResult Signup([FromBody] AuthenticationRequest request)
         {
@@ -57,6 +65,14 @@ namespace task_backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Log in a user.
+        /// </summary>
+        /// <param name="request">Authentication request containing username and password.</param>
+        /// <returns>Returns "Login successful" if login is successful.</returns>
+        /// <response code="200">Login successful</response>
+        /// <response code="400">Malformed user data</response>
+        /// <response code="401">Either username or password is incorrect</response>
         [HttpPost("login")]
         public IActionResult Login([FromBody] AuthenticationRequest request)
         {
@@ -82,6 +98,11 @@ namespace task_backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Log out the user.
+        /// </summary>
+        /// <returns>Returns "Logged out successfully" if the logout is successful.</returns>
+        /// <response code="200">Logged out successfully</response>
         [HttpPost("logout")]
         public IActionResult Logout()
         {
@@ -89,6 +110,13 @@ namespace task_backend.Controllers
             return Ok("Logged out successfully");
         }
 
+        /// <summary>
+        /// Get the user's profile information.
+        /// </summary>
+        /// <returns>Returns the user's profile information if authenticated.</returns>
+        /// <response code="200">Success response with the user's profile information.</response>
+        /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
+        /// <response code="404">Not found response with an error message if the user is not found.</response>
         [HttpGet("profile")]
         public IActionResult GetUserProfile()
         {

@@ -156,8 +156,8 @@ export default {
   
     async logout() {
       try {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
+        const response = await fetch('/api/auth/session', {
+          method: 'DELETE',
         });
 
         if (response.ok) {

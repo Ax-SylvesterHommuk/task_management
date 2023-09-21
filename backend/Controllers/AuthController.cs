@@ -68,12 +68,12 @@ namespace task_backend.Controllers
         /// <summary>
         /// Log in a user.
         /// </summary>
-        /// <param name="request">Authentication request containing username and password.</param>
+        /// <param name="request">Authentication request containing username and password for login.</param>
         /// <returns>Returns "Login successful" if login is successful.</returns>
         /// <response code="200">Login successful</response>
         /// <response code="400">Malformed user data</response>
         /// <response code="401">Either username or password is incorrect</response>
-        [HttpPost("login")]
+        [HttpPost("session")]
         public IActionResult Login([FromBody] AuthenticationRequest request)
         {
             using (MySqlConnection connection = _db.GetConnection())
@@ -103,7 +103,7 @@ namespace task_backend.Controllers
         /// </summary>
         /// <returns>Returns "Logged out successfully" if the logout is successful.</returns>
         /// <response code="200">Logged out successfully</response>
-        [HttpPost("logout")]
+        [HttpDelete("session")]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -117,7 +117,7 @@ namespace task_backend.Controllers
         /// <response code="200">Success response with the user's profile information.</response>
         /// <response code="401">Unauthorized response with an error message if not authenticated.</response>
         /// <response code="404">Not found response with an error message if the user is not found.</response>
-        [HttpGet("profile")]
+        [HttpGet("session")]
         public IActionResult GetUserProfile()
         {
             var userId = HttpContext.Session.GetString("UserId");

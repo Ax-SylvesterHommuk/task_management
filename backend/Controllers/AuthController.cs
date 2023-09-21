@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using task_backend.Models;
 using System.Data;
-using System.Security.Cryptography;
 using System.Text;
 using task_backend.Data;
+using task_backend.Helpers;
 using Microsoft.AspNetCore.Cors;
 
 namespace task_backend.Controllers
@@ -14,10 +14,12 @@ namespace task_backend.Controllers
     [EnableCors("AllowLocalhost")]
     public class AuthController : ControllerBase
     {
+        private readonly SecurityHelpers _securityHelpers;
         private readonly DatabaseContext _db;
 
-        public AuthController(DatabaseContext db)
+        public AuthController(SecurityHelpers securityHelpers, DatabaseContext db)
         {
+            _securityHelpers = securityHelpers;
             _db = db;
         }
 
@@ -38,7 +40,7 @@ namespace task_backend.Controllers
                     return Conflict("Account already exists");
                 }
 
-                string hashedPassword = HashPassword(request.Password);
+                string hashedPassword = _securityHelpers.HashPassword(request.Password, 5);
 
                 var user = new User
                 {
@@ -178,27 +180,9 @@ namespace task_backend.Controllers
             return null;
         }
 
-        // SHA256 hashing the password
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(password);
-                byte[] hash = sha256.ComputeHash(bytes);
-                StringBuilder builder = new StringBuilder();
-
-                for (int i = 0; i < hash.Length; i++)
-                {
-                    builder.Append(hash[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
-        }
-
         private bool VerifyPassword(string password, string hashedPassword)
         {
-            string hashedInput = HashPassword(password);
+            string hashedInput = _securityHelpers.HashPassword(password, 5);
             return string.Equals(hashedInput, hashedPassword, StringComparison.OrdinalIgnoreCase);
         }
     }

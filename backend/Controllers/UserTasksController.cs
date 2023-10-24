@@ -57,6 +57,15 @@ namespace task_backend.Controllers
 
             userTask.UserId = userId;
 
+            // Check model state for validation errors
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest("Task length cannot exceed 256 characters.");
+            }
+
             if (InsertUserTask(userTask, out int newTaskId))
             {
                 var createdTask = GetUserTask(newTaskId);
@@ -145,6 +154,15 @@ namespace task_backend.Controllers
 
             // Update the task description with the new one
             userTask.TaskDescription = updatedUserTask.TaskDescription;
+
+            // Check model state for validation errors
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest("Task length cannot exceed 256 characters.");
+            }
 
             if (UpdateUserTask(id, userTask))
             {
